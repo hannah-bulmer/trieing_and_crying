@@ -119,11 +119,6 @@ int trie_count (const struct trie * t) {
 
 
 
-void trie_print(const struct trie *t) {
-
-}
-
-
 void tnode_to_aos(const struct trienode *tn, int loc,
                   char *str, int * counter, char ** aos) {
     if (tn->word_end == true){
@@ -132,14 +127,13 @@ void tnode_to_aos(const struct trienode *tn, int loc,
     strcpy(word,str);
     aos[*counter] = word;
     ++ *counter;
-    int continues = 0;
-    for (int i = 0; i < 26; i++){
-        if (tn->children[i] != NULL){
-            str[loc] = 'a' + i;
-            tnode_to_aos(tn->children[i], loc + 1, str, counter, aos);
-        }
-      }
   }
+  for (int i = 0; i < 26; i++){
+      if (tn->children[i] != NULL){
+          str[loc] = 'a' + i;
+          tnode_to_aos(tn->children[i], loc + 1, str, counter, aos);
+      }
+    }
 }
 
 int trie_height(const struct trienode *node) {
@@ -155,7 +149,7 @@ int trie_height(const struct trienode *node) {
 }
 
 char **trie_to_aos(const struct trie *t) {
-  iif (t->root == NULL) return NULL;
+  if (t->root == NULL) return NULL;
     int numwords = trie_count(t);
     char ** aos = malloc(numwords * sizeof (char *));
     int maxlen = trie_height(t->root);
@@ -164,4 +158,22 @@ char **trie_to_aos(const struct trie *t) {
     tnode_to_aos(t->root, 0, str, &counter, aos);
     free(str);
     return aos;
+}
+
+
+void trie_printer(char ** aos, int len) {
+  for (int i = 0; i < len; i ++) {
+    char *word = aos[i];
+    for (int j = 0; word[j] != 0; j ++) {
+      printf("%c", word[j]);
+    }
+    printf("\n");
+  }
+}
+
+
+void trie_print(const struct trie *t) {
+  char ** aos = trie_to_aos(t);
+  int len = trie_count(t);
+  trie_printer(aos, len);
 }
